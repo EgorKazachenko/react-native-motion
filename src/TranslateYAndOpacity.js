@@ -94,6 +94,7 @@ class TranslateYAndOpacity extends PureComponent {
     const animatedStyle = {
       opacity: opacityValue,
       transform: [{ translateY: translateYValue }],
+      flex: 1,
     };
 
     return <Animated.View style={animatedStyle}>{children}</Animated.View>;
