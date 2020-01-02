@@ -1,57 +1,97 @@
 import React, { PureComponent } from 'react';
-import { Animated } from 'react-native';
+import { Animated, InteractionManager } from 'react-native';
 import PropTypes from 'prop-types';
 
 const propTypes = {
-  type: PropTypes.string,
+  opacityMin: PropTypes.number,
+  duration: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
+  animateOnDidMount: PropTypes.bool,
+  delay: PropTypes.number, // eslint-disable-line react/no-unused-prop-types
+  useNativeDriver: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
+  containerStyles: PropTypes.object,
 };
 const defaultProps = {
-  type: 'timing',
+  opacityMin: 0,
+  duration: 500,
+  animateOnDidMount: false,
+  delay: 0,
+  useNativeDriver: false,
+  containerStyles: {},
 };
 
-class Opacity extends PureComponent {
+class Opcaity extends PureComponent {
   constructor(props) {
     super(props);
 
-    const { value } = props;
+    const { opacityMin } = props;
 
     this.state = {
-      opacityValue: new Animated.Value(value),
+      opacityValue: new Animated.Value(opacityMin),
     };
   }
-  componentDidUpdate(prevProps) {
-    const { value } = this.props;
+  componentDidMount() {
+    const { animateOnDidMount } = this.props;
 
-    if (prevProps.value !== value) {
-      this.move(this.props);
+    if (animateOnDidMount) {
+      InteractionManager.runAfterInteractions().then(() => {
+        this.show(this.props);
+      });
     }
   }
-  move = props => {
-    const { value, style, type, ...rest } = props;
-    const { opacityValue } = this.state;
+  componentDidUpdate(prevProps) {
+    const { isHidden } = this.props;
 
-    Animated[type](opacityValue, {
-      toValue: value,
-      ...rest,
-    }).start();
-  };
+    if (!prevProps.isHidden && isHidden) {
+      this.hide(this.props);
+    }
+    if (prevProps.isHidden && !isHidden) {
+      this.show(this.props);
+    }
+  }
+  show(props) {
+    const { opacityValue } = this.state;
+    const { onShowDidFinish, ...rest } = props;
+
+    Animated.parallel([
+      Animated.timing(opacityValue, {
+        toValue: 1,
+        ...rest,
+      }),
+    ]).start(() => {
+      if (onShowDidFinish) {
+        onShowDidFinish(props);
+      }
+    });
+  }
+  hide(props) {
+    const { opacityValue } = this.state;
+    const { opacityMin, onHideDidFinish, ...rest } = props;
+
+    Animated.parallel([
+      Animated.timing(opacityValue, {
+        toValue: opacityMin,
+        ...rest,
+      }),
+    ]).start(() => {
+      if (onHideDidFinish) {
+        onHideDidFinish(props);
+      }
+    });
+  }
   render() {
-    const { style, children, ...rest } = this.props;
+    const { children, containerStyles } = this.props;
     const { opacityValue } = this.state;
 
     const animatedStyle = {
       opacity: opacityValue,
+      ...containerStyles,
     };
 
-    return (
-      <Animated.View style={[style, animatedStyle]} {...rest}>
-        {children}
-      </Animated.View>
-    );
+    return <Animated.View style={animatedStyle}>{children}</Animated.View>;
   }
 }
 
-Opacity.propTypes = propTypes;
-Opacity.defaultProps = defaultProps;
+TranslateYAndOpacity.propTypes = propTypes;
+TranslateYAndOpacity.defaultProps = defaultProps;
 
-export default Opacity;
+export default Opcaity;
