@@ -91,7 +91,7 @@ class Opcaity extends PureComponent {
   }
 }
 
-TranslateYAndOpacity.propTypes = propTypes;
-TranslateYAndOpacity.defaultProps = defaultProps;
+Opcaity.propTypes = propTypes;
+Opcaity.defaultProps = defaultProps;
 
 export default Opcaity;
