@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Animated, InteractionManager } from 'react-native';
+import { Animated } from 'react-native';
 import PropTypes from 'prop-types';
 
 const propTypes = {
@@ -36,9 +36,7 @@ class TranslateYAndOpacity extends PureComponent {
     const { animateOnDidMount } = this.props;
 
     if (animateOnDidMount) {
-      InteractionManager.runAfterInteractions().then(() => {
-        this.show(this.props);
-      });
+      this.show(this.props);
     }
   }
   componentDidUpdate(prevProps) {

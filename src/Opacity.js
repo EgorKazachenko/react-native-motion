@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Animated, InteractionManager } from 'react-native';
+import { Animated } from 'react-native';
 import PropTypes from 'prop-types';
 
 const propTypes = {
@@ -33,9 +33,7 @@ class Opcaity extends PureComponent {
     const { animateOnDidMount } = this.props;
 
     if (animateOnDidMount) {
-      InteractionManager.runAfterInteractions().then(() => {
-        this.show(this.props);
-      });
+      this.show(this.props);
     }
   }
   componentDidUpdate(prevProps) {
@@ -52,12 +50,10 @@ class Opcaity extends PureComponent {
     const { opacityValue } = this.state;
     const { onShowDidFinish, ...rest } = props;
 
-    Animated.parallel([
-      Animated.timing(opacityValue, {
-        toValue: 1,
-        ...rest,
-      }),
-    ]).start(() => {
+    Animated.timing(opacityValue, {
+      toValue: 1,
+      ...rest,
+    }).start(() => {
       if (onShowDidFinish) {
         onShowDidFinish(props);
       }
@@ -67,12 +63,10 @@ class Opcaity extends PureComponent {
     const { opacityValue } = this.state;
     const { opacityMin, onHideDidFinish, ...rest } = props;
 
-    Animated.parallel([
-      Animated.timing(opacityValue, {
-        toValue: opacityMin,
-        ...rest,
-      }),
-    ]).start(() => {
+    Animated.timing(opacityValue, {
+      toValue: opacityMin,
+      ...rest,
+    }).start(() => {
       if (onHideDidFinish) {
         onHideDidFinish(props);
       }
