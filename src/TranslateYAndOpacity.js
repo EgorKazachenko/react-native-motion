@@ -36,7 +36,9 @@ class TranslateYAndOpacity extends PureComponent {
     const { animateOnDidMount } = this.props;
 
     if (animateOnDidMount) {
-      this.show(this.props);
+      if (!isHidden) {
+        this.show(this.props);
+      }
     }
   }
   componentDidUpdate(prevProps) {
